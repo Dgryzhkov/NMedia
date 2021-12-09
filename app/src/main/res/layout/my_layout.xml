@@ -94,7 +94,7 @@
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@id/like"
         app:layout_constraintTop_toTopOf="@id/like"
-        tools:text="40000" />
+        tools:text="40001" />
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/share"
