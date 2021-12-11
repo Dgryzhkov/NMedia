@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">NMedia</string>
-    <string name="NMedia" translatable="false">NMedia!</string>
+    <string name="app_name" >NMedia</string>
+    <string name="NMedia" >NMedia!</string>
     <string name="avatar_author">avatar author</string>
 </resources>
