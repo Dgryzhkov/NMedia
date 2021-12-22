@@ -3,42 +3,38 @@ package ru.netology.nmedia
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
-import ru.netology.nmedia.databinding.ActivityMainBinding.*
+import kotlinx.android.synthetic.main.card_post.*
+import ru.netology.nmedia.adapter.PostsAdapter
+import ru.netology.nmedia.databinding.ActivityMainBinding
+import ru.netology.nmedia.databinding.CardPostBinding
+import ru.netology.nmedia.dto.Post
+
 import ru.netology.nmedia.viewmodel.PostViewModel
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = inflate(layoutInflater)
+        val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val services  = Services()
+
 
         val viewModel: PostViewModel by viewModels()
-        viewModel.data.observe(this) { post ->
-            with(binding) {
-                author.text = post.author
-                published.text = post.published
-                content.text = post.content
-                like?.setImageResource(if (post.likedByMe) R.drawable.ic_baseline_favorite_24 else R.drawable.ic_outline_favorite_border_24)
-                likeCount?.text=services.formatCount(post.likes)
-                share?.setImageResource(R.drawable.ic_baseline_share_24)
-                shareCount?.text=services.formatCount(post.shares)
-                views?.setImageResource(R.drawable.ic_baseline_remove_red_eye_24)
-                viewsCount?.text=services.formatCount(post.views)
 
-            }
-        }
-        binding.like?.setOnClickListener {
-            viewModel.like()
-        }
-        binding.share?.setOnClickListener{
-            viewModel.share()
-        }
-        binding.views?.setOnClickListener{
-            viewModel.view()
+
+        val adapter = PostsAdapter ({ viewModel.likedById(it.id)}, {viewModel.share(it.id)},{viewModel.view(it.id)})
+
+
+        binding.container.adapter = adapter
+        //binding.container.itemAnimator =null//отключение анимации по умолчанию
+        viewModel.data.observe(this) { posts ->
+            adapter.submitList(posts)
         }
     }
+
+
 }
+
+
 
 
 
