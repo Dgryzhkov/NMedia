@@ -5,4 +5,9 @@
     <string name="description_post_menu">Post menu</string>
     <string name="description_post_like">Like</string>
     <string name="description_post_share">Share</string>
+    <string name="menu_remove">Remove</string>
+    <string name="post_text">post_text</string>
+    <string name="error_empty_content">emtpy</string>
+    <string name="menu_edit">edit</string>
+    <string name="edit_message">Edit Message</string>
 </resources>

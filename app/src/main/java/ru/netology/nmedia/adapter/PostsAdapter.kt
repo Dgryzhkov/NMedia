@@ -2,6 +2,7 @@ package ru.netology.nmedia.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -10,18 +11,23 @@ import ru.netology.nmedia.Services
 import ru.netology.nmedia.databinding.CardPostBinding
 import ru.netology.nmedia.dto.Post
 
-typealias Callback = (Post) -> Unit // приведение типа
+interface AdapterCallback {
+    fun onLike(post: Post)
+    fun onRemove(post: Post)
+    fun onEdit(post: Post)
+    fun onShare(post: Post)
+    fun onViews(post: Post)
+
+}
 
 class PostsAdapter(
-    private val likeCallBack: Callback,
-    private val shareCallback: Callback,
-    private val viewsCallback: Callback,
 
+    private val callback: AdapterCallback
 ) :
     ListAdapter<Post, PostViewHolder>(PostDiffCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val binding = CardPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return PostViewHolder(binding, likeCallBack,shareCallback,viewsCallback)
+        return PostViewHolder(binding, callback)
 
     }
 
@@ -35,10 +41,7 @@ class PostsAdapter(
 
 class PostViewHolder(
     private val binding: CardPostBinding,
-    private val likeCallBack: Callback,
-    private val shareCallback: Callback,
-    private val viewsCallback: Callback,
-
+    private val callback: AdapterCallback,
     private val services: Services = Services()
 
 ) : RecyclerView.ViewHolder(binding.root) {
@@ -47,47 +50,40 @@ class PostViewHolder(
             author.text = post.author
             published.text = post.published
             content.text = post.content
-            like?.setImageResource(if (post.likedByMe) R.drawable.ic_baseline_favorite_24 else R.drawable.ic_outline_favorite_border_24)
+            like.setImageResource(if (post.likedByMe) R.drawable.ic_baseline_favorite_24 else R.drawable.ic_outline_favorite_border_24)
             like.setOnClickListener {
-                likeCallBack(post)
+                callback.onLike(post)
 
 
             }
-            likeCount?.text = services.formatCount(post.likes)
-            share?.setImageResource(R.drawable.ic_baseline_share_24)
-            shareCount?.text=services.formatCount(post.shares)
-            views?.setImageResource(R.drawable.ic_baseline_remove_red_eye_24)
-            viewsCount?.text=services.formatCount(post.views)
+            likeCount.text = services.formatCount(post.likes)
+            share.setImageResource(R.drawable.ic_baseline_share_24)
+            shareCount.text = services.formatCount(post.shares)
+            views.setImageResource(R.drawable.ic_baseline_remove_red_eye_24)
+            viewsCount.text = services.formatCount(post.views)
 
-            binding.like?.setOnClickListener {
-               likeCallBack(post)
+            binding.like.setOnClickListener {
+                callback.onLike(post)
             }
-            binding.share?.setOnClickListener{
-                shareCallback(post)
+            binding.share.setOnClickListener {
+                callback.onShare(post)
             }
-            binding.views?.setOnClickListener{
-                viewsCallback(post)
+            binding.views.setOnClickListener {
+                callback.onViews(post)
             }
-
-/*            likeCount?.text = services.formatCount(post.likes)
-            like.setOnClickListener{
-                likeCountCallback(post)
+            menu.setOnClickListener {
+                PopupMenu(it.context, it).apply {
+                    inflate(R.menu.menu_post)
+                    setOnMenuItemClickListener { menuItem ->
+                        when (menuItem.itemId) {
+                            R.id.remove -> callback.onRemove(post)
+                            R.id.edit -> callback.onEdit(post)
+                        }
+                        true
+                    }
+                }.show()
             }
-
-
-            share?.setImageResource(R.drawable.ic_baseline_share_24)
-            shareCount?.text = services.formatCount(post.shares)
-
-            share.setOnClickListener{
-                shareCallback(post)
-            }
-
-
-            views?.setImageResource(R.drawable.ic_baseline_remove_red_eye_24)
-            views.setOnClickListener{
-                viewsCallback(post)
-            }*/
-            viewsCount?.text = services.formatCount(post.views)
+            viewsCount.text = services.formatCount(post.views)
 
 
         }
