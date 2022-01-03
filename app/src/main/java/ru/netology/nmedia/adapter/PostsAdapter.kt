@@ -50,18 +50,10 @@ class PostViewHolder(
             author.text = post.author
             published.text = post.published
             content.text = post.content
-            like.setImageResource(if (post.likedByMe) R.drawable.ic_baseline_favorite_24 else R.drawable.ic_outline_favorite_border_24)
-            like.setOnClickListener {
-                callback.onLike(post)
-
-
-            }
-            likeCount.text = services.formatCount(post.likes)
-            share.setImageResource(R.drawable.ic_baseline_share_24)
-            shareCount.text = services.formatCount(post.shares)
-            views.setImageResource(R.drawable.ic_baseline_remove_red_eye_24)
-            viewsCount.text = services.formatCount(post.views)
-
+            like.isChecked = post.likedByMe
+            like.text = services.formatCount(post.likes)
+            share.text = services.formatCount(post.shares)
+            views.text = services.formatCount(post.views)
             binding.like.setOnClickListener {
                 callback.onLike(post)
             }
@@ -83,9 +75,6 @@ class PostViewHolder(
                     }
                 }.show()
             }
-            viewsCount.text = services.formatCount(post.views)
-
-
         }
     }
 
