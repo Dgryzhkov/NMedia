@@ -11,4 +11,7 @@
     <string name="post_text">текст поста</string>
     <string name="menu_edit">изменить</string>
     <string name="edit_message">Изменить сообщение</string>
+    <string name="chooser_share_post">Поделиться</string>
+    <string name="save">сохранить</string>
+    <string name="play">воспроизвести</string>
 </resources>

@@ -10,4 +10,7 @@
     <string name="error_empty_content">emtpy</string>
     <string name="menu_edit">edit</string>
     <string name="edit_message">Edit Message</string>
+    <string name="chooser_share_post">Share post</string>
+    <string name="save" >save</string>
+    <string name="play" >play</string>
 </resources>

@@ -3,6 +3,7 @@ package ru.netology.nmedia.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -17,6 +18,7 @@ interface AdapterCallback {
     fun onEdit(post: Post)
     fun onShare(post: Post)
     fun onViews(post: Post)
+    fun videoPlayer(post: Post)
 
 }
 
@@ -63,6 +65,8 @@ class PostViewHolder(
             binding.views.setOnClickListener {
                 callback.onViews(post)
             }
+            groupVideo.isVisible = !post.video.isNullOrBlank()
+
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.menu_post)
