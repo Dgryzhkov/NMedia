@@ -6,4 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".activity.IntentHandlerActivity">
 
+    <EditText
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:hint="@string/post_text"
+        android:gravity="top"
+        android:inputType="textMultiLine"
+        android:background="@android:color/transparent"
+        android:padding="@dimen/common_spacing"
+        android:importantForAutofill="no"
+        />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
