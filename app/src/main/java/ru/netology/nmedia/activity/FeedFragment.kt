@@ -2,38 +2,52 @@ package ru.netology.nmedia.activity
 
 import android.content.Intent
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 
-import androidx.activity.viewModels
+
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 
 import ru.netology.nmedia.R
 import ru.netology.nmedia.adapter.PostsAdapter
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.adapter.AdapterCallback
-import ru.netology.nmedia.databinding.ActivityMainBinding
+import ru.netology.nmedia.databinding.FragmentFeedBinding
 
 
 import ru.netology.nmedia.viewmodel.PostViewModel
+import javax.security.auth.callback.Callback
 
-class MainActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        val binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+// переход от активити к рагментам shift+f6 переименовать
 
-        val viewModel: PostViewModel by viewModels()
+class FeedFragment : Fragment() {
 
-        val newPostContract = registerForActivityResult(PostContract()) { text ->
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View { //  не nullable убрать ?
+        val binding = FragmentFeedBinding.inflate(
+            inflater,
+            container,
+            false
+        )
+        val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
+/*         val newPostContract = registerForActivityResult(PostContract()) { text ->
             text?.let {
 
                 viewModel.changeContent(text.toString())
                 viewModel.save()
             }
-        }
-
-
+        }*/
         val adapter = PostsAdapter(object : AdapterCallback {
+
             override fun onLike(post: Post) {
                 viewModel.likedById(post.id)
             }
@@ -43,8 +57,9 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onEdit(post: Post) {
-                newPostContract.launch(post.content)
-                viewModel.edit(post)
+                //  newPostContract.launch(post.content)
+              //  findNavController().navigate(R.id.action_feedFragment_to_postFragment)
+
 
             }
 
@@ -70,17 +85,12 @@ class MainActivity : AppCompatActivity() {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(post.video))
                 startActivity(intent)
             }
-
-
         })
-
-        binding.add?.setOnClickListener {
-            newPostContract.launch("")
-        }
 
         binding.list.adapter = adapter
         //binding.container.itemAnimator =null//отключение анимации по умолчанию
-        viewModel.data.observe(this) { posts ->
+        //viewLifecycleOwner вместо this
+        viewModel.data.observe(viewLifecycleOwner) { posts ->
             val newPost = adapter.itemCount < posts.size
             adapter.submitList(posts) {
                 if (newPost) {
@@ -88,6 +98,14 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+        binding.add.setOnClickListener {
+            findNavController().navigate(
+                R.id.action_feedFragment_to_newPostFragment,
+            )
+
+        }
+
+        return binding.root
     }
 }
 

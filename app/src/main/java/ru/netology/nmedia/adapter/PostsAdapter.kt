@@ -44,18 +44,17 @@ class PostsAdapter(
 class PostViewHolder(
     private val binding: CardPostBinding,
     private val callback: AdapterCallback,
-    private val services: Services = Services()
 
-) : RecyclerView.ViewHolder(binding.root) {
+    ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(post: Post) {
         binding.apply {
             author.text = post.author
             published.text = post.published
             content.text = post.content
             like.isChecked = post.likedByMe
-            like.text = services.formatCount(post.likes)
-            share.text = services.formatCount(post.shares)
-            views.text = services.formatCount(post.views)
+            like.text = Services.formatCount(post.likes)
+            share.text = Services.formatCount(post.shares)
+            views.text = Services.formatCount(post.views)
             binding.like.setOnClickListener {
                 callback.onLike(post)
             }
