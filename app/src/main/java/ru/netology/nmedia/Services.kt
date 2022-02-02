@@ -1,6 +1,6 @@
 package ru.netology.nmedia
 
-class Services {
+object Services {
     //формат чисел с обавление суфикса
      fun formatCount(number: Int): String {
         val suffixes = charArrayOf('k', 'm')

@@ -9,8 +9,7 @@ import ru.netology.nmedia.dto.Post
 
 class PostRepositoryInFilefImpl(val context: Context) : PostRepository {
     private val gson = Gson()
-//    private val prefs = context.getSharedPreferences("repo", Context.MODE_PRIVATE)
-//    private val key = "posts"
+
     private val type = TypeToken.getParameterized(List::class.java, Post::class.java).type
     private val filename = "posts.json"
     private var nextId = 1L
@@ -29,19 +28,14 @@ class PostRepositoryInFilefImpl(val context: Context) : PostRepository {
        } else {
            sync()
        }
-//        prefs.getString(key, null)?.let { it ->
-//
-//        }
+
     }
 
     private fun sync(){
         context.openFileOutput(filename, Context.MODE_PRIVATE).bufferedWriter().use {
             it.write(gson.toJson(posts))
         }
-//        with(prefs.edit()){
-//            putString(key,gson.toJson(posts))
-//            apply()
-//        }
+
     }
     override fun getAll(): LiveData<List<Post>> = data
 
