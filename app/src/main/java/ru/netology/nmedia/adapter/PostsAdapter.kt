@@ -19,12 +19,13 @@ interface AdapterCallback {
     fun onShare(post: Post)
     fun onViews(post: Post)
     fun videoPlayer(post: Post)
-
+    fun onPost(post: Post)
 }
 
 class PostsAdapter(
 
     private val callback: AdapterCallback
+
 ) :
     ListAdapter<Post, PostViewHolder>(PostDiffCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
@@ -38,6 +39,7 @@ class PostsAdapter(
         holder.bind(post)
     }
 
+
 }
 
 
@@ -47,7 +49,12 @@ class PostViewHolder(
 
     ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(post: Post) {
+
         binding.apply {
+            binding.root.setOnClickListener {
+                callback.onPost(post)
+            }
+
             author.text = post.author
             published.text = post.published
             content.text = post.content

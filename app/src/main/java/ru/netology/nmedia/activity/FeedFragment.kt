@@ -1,27 +1,22 @@
 package ru.netology.nmedia.activity
 
+
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
-
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-
 import ru.netology.nmedia.R
-import ru.netology.nmedia.adapter.PostsAdapter
-import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.adapter.AdapterCallback
+import ru.netology.nmedia.adapter.PostsAdapter
 import ru.netology.nmedia.databinding.FragmentFeedBinding
-
-
+import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.util.AndroidUtils
 import ru.netology.nmedia.viewmodel.PostViewModel
-import javax.security.auth.callback.Callback
 
 // переход от активити к рагментам shift+f6 переименовать
 
@@ -39,13 +34,7 @@ class FeedFragment : Fragment() {
             false
         )
         val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
-/*         val newPostContract = registerForActivityResult(PostContract()) { text ->
-            text?.let {
 
-                viewModel.changeContent(text.toString())
-                viewModel.save()
-            }
-        }*/
         val adapter = PostsAdapter(object : AdapterCallback {
 
             override fun onLike(post: Post) {
@@ -57,8 +46,8 @@ class FeedFragment : Fragment() {
             }
 
             override fun onEdit(post: Post) {
-                //  newPostContract.launch(post.content)
-              //  findNavController().navigate(R.id.action_feedFragment_to_postFragment)
+
+                findNavController().navigate(R.id.action_feedFragment_to_postFragment)
 
 
             }
@@ -85,7 +74,15 @@ class FeedFragment : Fragment() {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(post.video))
                 startActivity(intent)
             }
+
+            override fun onPost(post: Post) {
+
+                AndroidUtils.hideKeyboard(requireView())
+                findNavController().navigate(R.id.action_feedFragment_to_postFragment)
+            }
         })
+
+
 
         binding.list.adapter = adapter
         //binding.container.itemAnimator =null//отключение анимации по умолчанию
@@ -98,6 +95,7 @@ class FeedFragment : Fragment() {
                 }
             }
         }
+
         binding.add.setOnClickListener {
             findNavController().navigate(
                 R.id.action_feedFragment_to_newPostFragment,
