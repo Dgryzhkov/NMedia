@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -47,9 +48,11 @@ class FeedFragment : Fragment() {
 
             override fun onEdit(post: Post) {
 
-                findNavController().navigate(R.id.action_feedFragment_to_postFragment)
-
-
+                post?.let { it -> viewModel.edit(it) }
+                findNavController().navigate(
+                    R.id.action_feedFragment_to_newPostFragment,
+                    bundleOf()
+                )
             }
 
             override fun onShare(post: Post) {
@@ -76,9 +79,11 @@ class FeedFragment : Fragment() {
             }
 
             override fun onPost(post: Post) {
-
                 AndroidUtils.hideKeyboard(requireView())
-                findNavController().navigate(R.id.action_feedFragment_to_postFragment)
+                findNavController().navigate(
+                    R.id.action_feedFragment_to_postFragment,
+                    bundleOf("id" to post.id)
+                )
             }
         })
 
