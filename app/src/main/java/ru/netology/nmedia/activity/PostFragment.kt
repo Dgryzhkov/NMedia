@@ -61,6 +61,16 @@ class PostFragment : Fragment() {
 
                 share.setOnClickListener{
                     singlePost?.let { it->viewModel.share(it.id) }
+                    val intent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        putExtra(
+                            Intent.EXTRA_TEXT, singlePost?.content//post.content
+                        )
+                        type = "text/plain"
+                    }
+                    val chooser =
+                        Intent.createChooser(intent, getString(R.string.chooser_share_post))
+                    startActivity(chooser)
                 }
                 views.text = singlePost?.let { it -> Services.formatCount(it.views) }
 
