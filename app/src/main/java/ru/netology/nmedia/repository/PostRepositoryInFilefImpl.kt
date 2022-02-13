@@ -1,13 +1,12 @@
 package ru.netology.nmedia.repository
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.dto.Post
 
-class PostRepositoryInFilefImpl(val context: Context) : PostRepository {
+/*class PostRepositoryInFilefImpl(val context: Context) : PostRepository {
     private val gson = Gson()
 
     private val type = TypeToken.getParameterized(List::class.java, Post::class.java).type
@@ -29,18 +28,29 @@ class PostRepositoryInFilefImpl(val context: Context) : PostRepository {
            sync()
        }
 
+    }*/
+class PostRepositorySQLiteImpl(
+    private val dao: PostDao
+) : PostRepository {
+    private var posts = emptyList<Post>()
+    private val data = MutableLiveData(posts)
+
+    init {
+        posts = dao.getAll()
+        data.value = posts
     }
 
-    private fun sync(){
+/*    private fun sync(){
         context.openFileOutput(filename, Context.MODE_PRIVATE).bufferedWriter().use {
             it.write(gson.toJson(posts))
         }
 
-    }
+    }*/
     override fun getAll(): LiveData<List<Post>> = data
 
 
     override fun likeById(id: Long) {
+        dao.likeById(id)
         posts = posts.map {
             if (it.id != id) it else if (!it.likedByMe) it.copy(
                 likedByMe = !it.likedByMe,
@@ -50,7 +60,7 @@ class PostRepositoryInFilefImpl(val context: Context) : PostRepository {
 
         }
         data.value = posts
-        sync()
+        //sync()
     }
 
     override fun share(id: Long) {
@@ -58,7 +68,7 @@ class PostRepositoryInFilefImpl(val context: Context) : PostRepository {
             if (it.id != id) it else it.copy(shares = it.shares + 1)
         }
         data.value = posts
-        sync()
+        //sync()
     }
 
     override fun view(id: Long) {
@@ -67,24 +77,29 @@ class PostRepositoryInFilefImpl(val context: Context) : PostRepository {
             if (it.id != id) it else it.copy(views = it.views + 1)
         }
         data.value = posts
-        sync()
+       // sync()
 
     }
 
     override fun removeById(id: Long) {
+        dao.removeById(id)
         posts = posts.filter { it.id != id }
         data.value = posts
-        sync()
+        //sync()
     }
 
     override fun save(post: Post) {
+        val id = post.id
+        val saved = dao.save(post)
         posts = if (post.id == 0L) {
-            listOf(post.copy(id = nextId++, author = "Me", published = "now")) + posts
+            listOf(saved)+posts
+            //listOf(post.copy(id = nextId++, author = "Me", published = "now")) + posts
         } else {
-            posts.map { if (it.id != post.id) it else it.copy(content = post.content) }
+            posts.map { if (it.id!=id) it  else saved }
+            //posts.map { if (it.id != post.id) it else it.copy(content = post.content) }
         }
         data.value = posts
-        sync()
+       // sync()
     }
 
     override fun cancel(post: Post) {
