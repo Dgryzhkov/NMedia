@@ -18,7 +18,7 @@ class PostDaoImpl(private val db: SQLiteDatabase) : PostDao {
             ${PostColumns.COLUMN_SHARES} INTEGER NOT NULL DEFAULT 0,
             ${PostColumns.COLUMN_VIEW} BOOLEAN NOT NULL DEFAULT 0,
             ${PostColumns.COLUMN_VIEWS} INTEGER NOT NULL DEFAULT 0,
-            ${PostColumns.COLUMN_VIDEO} TEXT DEFAULT NULL,
+            ${PostColumns.COLUMN_VIDEO} TEXT DEFAULT NULL
         );
         """.trimIndent()
     }
