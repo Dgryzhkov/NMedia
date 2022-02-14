@@ -7,9 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-
-import kotlinx.android.synthetic.main.card_post.view.*
-import kotlinx.android.synthetic.main.fragment_new_post.*
 import ru.netology.nmedia.R
 
 import ru.netology.nmedia.databinding.FragmentNewPostBinding
