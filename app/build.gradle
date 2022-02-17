@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
+    id 'com.google.gms.google-services'
 
 }
 
@@ -64,7 +65,9 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
     implementation "androidx.room:room-runtime:$room_version"
+    implementation platform('com.google.firebase:firebase-bom:29.1.0')
     kapt "androidx.room:room-compiler:$room_version"
+    implementation "com.google.firebase:firebase-messaging-ktx"
 
 
     testImplementation 'junit:junit:4.13.2'
