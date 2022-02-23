@@ -9,8 +9,11 @@ import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
+import org.json.JSONException
 import ru.netology.nmedia.R
 import ru.netology.nmedia.dto.Post
+import java.lang.RuntimeException
 import kotlin.random.Random
 
 class FCMGService : FirebaseMessagingService() {
@@ -35,25 +38,40 @@ class FCMGService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         println(Gson().toJson(remoteMessage))
-        remoteMessage.data["action"]?.let {
-            when (Action.valueOf(it)) {
-                Action.LIKE -> handLike(
-                    Gson().fromJson(
-                        remoteMessage.data["content"],
-                        PostParams::class.java
-                    )
-                )
-                Action.POST -> handlePost(
-                    Gson().fromJson(
-                        remoteMessage.data["content"],
-                        PostParams::class.java,
 
-                    )
-                )
+        remoteMessage.data["action"]?.let {
+            val contains: Boolean =
+                try {
+                    Action.valueOf(it)
+                    true
+                } catch (e: RuntimeException) {
+                    false
+                }
+            if (contains) {
+                try {
+
+
+                    when (Action.valueOf(it)) {
+                        Action.LIKE -> handLike(
+                            Gson().fromJson(
+                                remoteMessage.data["content"],
+                                PostParams::class.java
+                            )
+                        )
+                        Action.POST -> handlePost(
+                            Gson().fromJson(
+                                remoteMessage.data["content"],
+                                PostParams::class.java,
+                            )
+                        )
+                    }
+                } catch (e: JsonSyntaxException) {
+
+                }
             }
         }
-
     }
+
 
     override fun onNewToken(token: String) {
         println(token)
