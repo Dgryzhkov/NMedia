@@ -36,7 +36,14 @@ class PostRepositoryImpl: PostRepository {
     }
 
     override fun likeById(id: Long) {
-        // TODO: do this in homework
+        val request: Request = Request.Builder()
+            .post("".toRequestBody())
+            .url("${BASE_URL}/api/slow/posts/$id/likes")
+            .build()
+
+        client.newCall(request)
+            .execute()
+            .close()
     }
 
     override fun save(post: Post) {
