@@ -79,6 +79,15 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun unLikeById(id: Long){
+        thread {
+            val updated = repository.unLikeById(id)
+            val posts= data.value?.posts.orEmpty().map { if (it.id==id)updated else it }
+            _data.postValue(FeedModel(posts = posts, empty = posts.isEmpty()))
+
+        }
+    }
+
     fun removeById(id: Long) {
         thread {
             // Оптимистичная модель
