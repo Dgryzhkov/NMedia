@@ -16,7 +16,7 @@ private val empty = Post(
     authorAvatar = "",
     likedByMe = false,
     likes = 0,
-    published = ""
+    published = "",
 )
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
@@ -49,7 +49,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     fun save() {
         val post = edited.value
-        repository.saveAsync( post!!, object : PostRepository.SaveRemoveCallback {
+        repository.saveAsync(post!!, object : PostRepository.SaveRemoveCallback {
             override fun onSuccess() {
                 _postCreated.postValue(Unit)
             }
@@ -76,7 +76,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     fun likeById(id: Long) {
         repository.likeByIdAsync(id, object : PostRepository.LikeCallback {
             override fun onSuccess(id: Long, post: Post) {
-                val posts = _data.value?.posts.orEmpty().map{if (it.id == id) post else it }
+                val posts = _data.value?.posts.orEmpty().map { if (it.id == id) post else it }
                 _data.postValue(FeedModel(posts = posts, empty = posts.isEmpty()))
             }
 
@@ -86,10 +86,10 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         })
     }
 
-    fun unLikeById(id: Long){
+    fun unLikeById(id: Long) {
         repository.unLikeByIdAsync(id, object : PostRepository.LikeCallback {
             override fun onSuccess(id: Long, post: Post) {
-                val posts = _data.value?.posts.orEmpty().map{if (it.id == id) post else it }
+                val posts = _data.value?.posts.orEmpty().map { if (it.id == id) post else it }
                 _data.postValue(FeedModel(posts = posts, empty = posts.isEmpty()))
             }
 

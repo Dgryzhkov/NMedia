@@ -1,6 +1,7 @@
 package ru.netology.nmedia.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
@@ -40,14 +41,20 @@ class PostViewHolder(
 
     fun bind(post: Post) {
         binding.apply {
-            val url ="http://10.0.2.2:9999/avatars/${post.authorAvatar}"
+            val urlAvatar = "http://10.0.2.2:9999/avatars/${post.authorAvatar}"
             Glide.with(itemView)
-                .load(url)
+                .load(urlAvatar)
                 .error(R.drawable.ic_baseline_error_24)
                 .placeholder(R.drawable.ic_baseline_cached_24)
                 .timeout(10_000)
                 .circleCrop()
                 .into(avatar)
+
+            if (post.attachment != null) {
+                attachments.visibility = View.VISIBLE
+                val urlImage ="http://10.0.2.2:9999//images/${post.attachment!!.url}"
+                Glide.with(itemView).load(urlImage).timeout(10_000).into(attachments)
+            }
 
             author.text = post.author
             published.text = post.published
