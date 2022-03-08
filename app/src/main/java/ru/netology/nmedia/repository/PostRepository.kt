@@ -13,7 +13,7 @@ fun likeByIdAsync(id: Long, callback:LikeCallback)
 
     interface GetAllCallback {
         fun onSuccess(posts: List<Post>)
-        fun onError(e: Exception)
+        fun onError(t: Throwable)
     }
 
     interface LikeCallback {
