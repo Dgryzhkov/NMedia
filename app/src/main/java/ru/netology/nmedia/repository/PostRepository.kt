@@ -13,16 +13,16 @@ fun likeByIdAsync(id: Long, callback:LikeCallback)
 
     interface GetAllCallback {
         fun onSuccess(posts: List<Post>)
-        fun onError(t: Throwable)
+        fun onError(t: Throwable, erorrCode: Int)
     }
 
     interface LikeCallback {
         fun onSuccess(id: Long, post: Post)
-        fun onError(e: Exception)
+        fun onError(t: Throwable, erorrCode: Int)
     }
 
     interface SaveRemoveCallback {
         fun onSuccess()
-        fun onError(e: Exception)
+        fun onError(t: Throwable, erorrCode: Int)
     }
 }
