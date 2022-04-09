@@ -41,19 +41,21 @@ class PostViewHolder(
 
     fun bind(post: Post) {
         binding.apply {
-            val urlAvatar = "http://10.0.2.2:9999/avatars/${post.authorAvatar}"
+            attachment.visibility = View.GONE
+            val urlAvatar ="${BuildConfig.BASE_URL}/avatars/${post.authorAvatar}"
             Glide.with(itemView)
                 .load(urlAvatar)
-                .error(R.drawable.ic_baseline_error_24)
-                .placeholder(R.drawable.ic_baseline_cached_24)
+                .error(R.drawable.ic_avatar_loading_error_48)
+                .placeholder(R.drawable.ic_baseline_cruelty_free_48)
                 .timeout(10_000)
                 .circleCrop()
                 .into(avatar)
 
+
             if (post.attachment != null) {
-                attachments.visibility = View.VISIBLE
-                val urlImage ="http://10.0.2.2:9999//images/${post.attachment!!.url}"
-                Glide.with(itemView).load(urlImage).timeout(10_000).into(attachments)
+                attachment.visibility = View.VISIBLE
+                val urlImage ="${BuildConfig.BASE_URL}/images/${post.attachment!!.url}"
+                Glide.with(itemView).load(urlImage).timeout(10_000).into(attachment)
             }
 
             author.text = post.author
@@ -90,6 +92,7 @@ class PostViewHolder(
             share.setOnClickListener {
                 onInteractionListener.onShare(post)
             }
+
         }
     }
 }
