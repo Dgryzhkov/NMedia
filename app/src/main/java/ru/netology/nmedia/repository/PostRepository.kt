@@ -11,5 +11,7 @@ interface PostRepository {
     suspend fun removeById(id: Long)
     suspend fun likeById(id: Long)
     suspend fun disLikeById(id: Long)
+    suspend fun update()
+    suspend fun isSize(): Long
 
 }

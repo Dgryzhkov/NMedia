@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.core.view.size
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -54,7 +55,7 @@ class FeedFragment : Fragment() {
             }
         })
         binding.list.adapter = adapter
-        viewModel.dataState.observe(viewLifecycleOwner, { state ->
+        viewModel.dataState.observe(viewLifecycleOwner) { state ->
             binding.progress.isVisible = state.loading
             binding.swiperefresh.isRefreshing = state.refreshing
             if (state.error) {
@@ -62,15 +63,27 @@ class FeedFragment : Fragment() {
                     .setAction(R.string.retry_loading) { viewModel.retry() }
                     .show()
             }
-        })
-        viewModel.data.observe(viewLifecycleOwner, { state ->
-            adapter.submitList(state.posts)
-            binding.emptyText.isVisible = state.empty
-        })
+        }
+        viewModel.data.observe(viewLifecycleOwner) { state ->
+            val isNewPost = (adapter.itemCount < state.posts.size) && (adapter.itemCount > 0)
+            adapter.submitList(state.posts) {
+                if (isNewPost) {
+                    binding.list.smoothScrollToPosition(0)
+                }
+                binding.emptyText.isVisible = state.empty
+            }
+        }
+
 
         viewModel.newerCount.observe(viewLifecycleOwner) { state ->
-            // TODO: just log it, interaction must be in homework
-            println(state)
+            binding.news.visibility = View.VISIBLE
+        }
+
+        binding.news.setOnClickListener {
+            viewModel.update()
+
+            binding.list.smoothScrollToPosition(0)
+            binding.news.visibility = View.GONE
         }
 
         binding.fab.setOnClickListener {
