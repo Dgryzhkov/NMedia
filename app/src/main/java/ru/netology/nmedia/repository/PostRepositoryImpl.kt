@@ -39,10 +39,7 @@ class PostRepositoryImpl(private val dao: PostDao): PostRepository {
                             }
                             memoryPosts.remove(post)
                             val body =
-                                response.body() ?: throw ApiError(
-                                    response.code(),
-                                    response.message()
-                                )
+                                response.body() ?: throw ApiError()
                             dao.insert(PostEntity.fromDto(body))
                         }
                     }.awaitAll()
@@ -50,9 +47,9 @@ class PostRepositoryImpl(private val dao: PostDao): PostRepository {
             }
             val response = PostsApi.service.getAll()
             if (!response.isSuccessful) {
-                throw ApiError(response.code(), response.message())
+                throw ApiError()
             }
-            val body = response.body() ?: throw ApiError(response.code(), response.message())
+            val body = response.body() ?: throw ApiError()
             dao.insert(body.toEntity())
 
         } catch (e: IOException) {
@@ -64,12 +61,12 @@ class PostRepositoryImpl(private val dao: PostDao): PostRepository {
 
     override fun getNewerCount(id: Long): Flow<Int> = flow {
         while (true) {
-            delay(10_000L)
+            delay(120_000L)
             val response = PostsApi.service.getNewer(id)
             if (!response.isSuccessful) {
-                throw ApiError(response.code(), response.message())
+                throw ApiError()
             }
-            val body = response.body() ?: throw ApiError(response.code(), response.message())
+            val body = response.body() ?: throw ApiError()
             dao.insert(body.toEntityFlow())
             emit(body.size)
         }
@@ -85,9 +82,9 @@ class PostRepositoryImpl(private val dao: PostDao): PostRepository {
             val response = PostsApi.service.save(newPost)
 
             if (!response.isSuccessful) {
-                throw ApiError(response.code(), response.message())
+                throw ApiError()
             }
-            val body = response.body() ?: throw ApiError(response.code(), response.message())
+            val body = response.body() ?: throw ApiError()
             dao.insert(PostEntity.fromDto(body))
             memoryPosts.clear()
 
@@ -103,7 +100,7 @@ class PostRepositoryImpl(private val dao: PostDao): PostRepository {
         try {
             val response = PostsApi.service.removeById(id)
             if (!response.isSuccessful) {
-                throw ApiError(response.code(), response.message())
+                throw ApiError()
             }
             dao.removeById(id)
         } catch (e: IOException) {
@@ -117,9 +114,9 @@ class PostRepositoryImpl(private val dao: PostDao): PostRepository {
         try {
             val response = PostsApi.service.likeById(id)
             if (!response.isSuccessful) {
-                throw ApiError(response.code(), response.message())
+                throw ApiError()
             }
-            val body = response.body() ?: throw ApiError(response.code(), response.message())
+            val body = response.body() ?: throw ApiError()
             dao.insert(PostEntity.fromDto(body))
         } catch (e: IOException) {
             throw NetworkError
@@ -132,9 +129,9 @@ class PostRepositoryImpl(private val dao: PostDao): PostRepository {
         try {
             val response = PostsApi.service.dislikeById(id)
             if (!response.isSuccessful) {
-                throw ApiError(response.code(), response.message())
+                throw ApiError()
             }
-            val body = response.body() ?: throw ApiError(response.code(), response.message())
+            val body = response.body() ?: throw ApiError()
             dao.insert(PostEntity.fromDto(body))
         } catch (e: IOException) {
             throw NetworkError
