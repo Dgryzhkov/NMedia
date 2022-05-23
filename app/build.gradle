@@ -3,13 +3,20 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.gms.google-services'
 
+allprojects {
+    repositories {
+        maven { url "https://jitpack.io" }
+    }
+}
+
+
 android {
-    compileSdkVersion 31
+    compileSdkVersion 32
 
     defaultConfig {
         applicationId "ru.netology.nmedia"
         minSdkVersion 22
-        targetSdkVersion 31
+        targetSdkVersion 32
         versionCode 1
         versionName "1.0"
 
@@ -41,6 +48,7 @@ android {
             buildConfigField "String", "BASE_URL", '"http://10.0.2.2:9999"'
         }
     }
+    namespace 'ru.netology.nmedia'
 }
 
 dependencies {
@@ -97,4 +105,7 @@ dependencies {
     testImplementation "junit:junit:$junit_version"
     androidTestImplementation "androidx.test.ext:junit:$ext_junit_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"
+
+    implementation 'com.github.dhaval2404:imagepicker:2.1'
+
 }
