@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.navigation.findNavController
-
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -16,6 +15,7 @@ import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.DisplayingImagesFragment.Companion.textArg
 import ru.netology.nmedia.databinding.CardPostBinding
 import ru.netology.nmedia.dto.Post
+
 
 interface OnInteractionListener {
     fun onLike(post: Post) {}
@@ -69,6 +69,8 @@ class PostViewHolder(
             like.isChecked = post.likedByMe
             like.text = "${post.likes}"
 
+            menu.visibility = if (post.ownedByMe) View.VISIBLE else View.INVISIBLE
+
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.options_post)
@@ -96,10 +98,12 @@ class PostViewHolder(
             share.setOnClickListener {
                 onInteractionListener.onShare(post)
             }
+
             attachment.setOnClickListener{
                 it.findNavController().navigate(R.id.action_feedFragment_to_displayingImagesFragment,
                     Bundle().apply { textArg = post.attachment?.url ?: " "})
             }
+
         }
     }
 }
