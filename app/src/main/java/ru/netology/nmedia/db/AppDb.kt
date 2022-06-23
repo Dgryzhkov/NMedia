@@ -14,7 +14,7 @@ import ru.netology.nmedia.entity.PostEntity
 abstract class AppDb : RoomDatabase() {
     abstract fun postDao(): PostDao
 
-    companion object {
+/*    companion object {
         @Volatile
         private var instance: AppDb? = null
 
@@ -28,5 +28,5 @@ abstract class AppDb : RoomDatabase() {
             Room.databaseBuilder(context, AppDb::class.java, "app.db")
                 .fallbackToDestructiveMigration()
                 .build()
-    }
+    }*/
 }
