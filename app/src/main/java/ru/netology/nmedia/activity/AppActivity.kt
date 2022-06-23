@@ -69,22 +69,20 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.signin -> {
-                findNavController(R.id.nav_host_fragment).navigate(R.id.action_feedFragment_to_authenticationFragment)
-                true
-            }
-            R.id.signup -> {
-                findNavController(R.id.nav_host_fragment).navigate(R.id.action_feedFragment_to_registrationFragment)
-                true
-            }
-            R.id.signout -> {
-                appAuth.removeAuth()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
+        R.id.signin -> {
+            findNavController(R.id.nav_host_fragment).navigate(R.id.action_feedFragment_to_authenticationFragment)
+            true
         }
+        R.id.signup -> {
+            findNavController(R.id.nav_host_fragment).navigate(R.id.action_feedFragment_to_registrationFragment)
+            true
+        }
+        R.id.signout -> {
+            appAuth.removeAuth()
+            true
+        }
+        else -> super.onOptionsItemSelected(item)
     }
 
     private fun checkGoogleApiAvailability() {
