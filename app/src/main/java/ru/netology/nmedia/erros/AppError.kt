@@ -2,7 +2,6 @@
 package ru.netology.nmedia.error
 
 import android.database.SQLException
-import android.provider.Settings.Global.getString
 import ru.netology.nmedia.R
 import java.io.IOException
 

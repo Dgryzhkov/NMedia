@@ -23,7 +23,6 @@ class AppAuth @Inject constructor(
         const val ID_KEY ="id"
         const val TOKEN_KEY = "token"
     }
-    //private val prefs = context.getSharedPreferences("auth", Context.MODE_PRIVATE)
 
     private val _authStateFlow: MutableStateFlow<AuthState>
 
@@ -75,23 +74,6 @@ class AppAuth @Inject constructor(
             }
         }
     }
-
-/*    companion object {
-        @Volatile
-        private var instance: AppAuth? = null
-
-        fun getInstance(): AppAuth = synchronized(this) {
-            instance ?: throw IllegalStateException(
-                "AppAuth is not initialized, you must call AppAuth.initializeApp(Context context) first."
-            )
-        }
-
-        fun initApp(context: Context): AppAuth = instance ?: synchronized(this) {
-            instance ?: buildAuth(context).also { instance = it }
-        }
-
-        private fun buildAuth(context: Context): AppAuth = AppAuth(context)
-    }*/
 }
 
 data class AuthState(val id: Long = 0, val token: String? = null)
