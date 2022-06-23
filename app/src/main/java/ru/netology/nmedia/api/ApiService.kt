@@ -15,12 +15,13 @@ import ru.netology.nmedia.dto.PushToken
 
 private const val BASE_URL = "${BuildConfig.BASE_URL}/api/slow/"
 
-private val logging = HttpLoggingInterceptor().apply {
+/*private val logging = HttpLoggingInterceptor().apply {
     if (BuildConfig.DEBUG) {
         level = HttpLoggingInterceptor.Level.BODY
     }
-}
+}*/
 
+/*
 private val okhttp = OkHttpClient.Builder()
     .addInterceptor(logging)
     .addInterceptor { chain ->
@@ -39,6 +40,7 @@ private val retrofit = Retrofit.Builder()
     .baseUrl(BASE_URL)
     .client(okhttp)
     .build()
+*/
 
 interface ApiService {
     @POST("users/push-tokens")
@@ -78,8 +80,9 @@ interface ApiService {
 
 }
 
+/*
 object Api {
     val service: ApiService by lazy {
         retrofit.create(ApiService::class.java)
     }
-}
+}*/
