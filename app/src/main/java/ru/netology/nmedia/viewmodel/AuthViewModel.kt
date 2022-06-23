@@ -12,7 +12,6 @@ import ru.netology.nmedia.auth.AuthState
 import ru.netology.nmedia.dto.User
 import ru.netology.nmedia.error.UnknownError
 import ru.netology.nmedia.repository.UserRepository
-import ru.netology.nmedia.repository.UserRepositoryImpl
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,9 +24,6 @@ class AuthViewModel @Inject constructor(
         .asLiveData(Dispatchers.Default)
     val authenticated: Boolean
         get() = appAuth.authStateFlow.value.id != 0L
-
-   // private val repositoryUser : UserRepository = UserRepositoryImpl()
-
 
     fun onSignIn(user: User){
         viewModelScope.launch {
