@@ -2,6 +2,7 @@ package ru.netology.nmedia.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.*
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.catch
@@ -15,6 +16,7 @@ import ru.netology.nmedia.model.FeedModel
 import ru.netology.nmedia.model.FeedModelState
 import ru.netology.nmedia.repository.*
 import ru.netology.nmedia.util.SingleLiveEvent
+import javax.inject.Inject
 
 private val empty = Post(
     id = 0,
@@ -30,11 +32,13 @@ private val empty = Post(
 )
 
 @ExperimentalCoroutinesApi
-class PostViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository: PostRepository =
-        PostRepositoryImpl(AppDb.getInstance(context = application).postDao())
+@HiltViewModel
+class PostViewModel @Inject constructor(
+    private val repository: PostRepository,
+    appAuth: AppAuth
+): ViewModel(){
 
-    val data: LiveData<FeedModel> = AppAuth.getInstance()
+        val data: LiveData<FeedModel> = appAuth
         .authStateFlow
         .flatMapLatest { (myId, _) ->
             repository.data
