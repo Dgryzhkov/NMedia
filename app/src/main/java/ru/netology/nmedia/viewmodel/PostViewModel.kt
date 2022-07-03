@@ -1,13 +1,17 @@
 package ru.netology.nmedia.viewmodel
-
 import androidx.lifecycle.*
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import ru.netology.nmedia.R
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.FeedModel
@@ -34,32 +38,21 @@ private val empty = Post(
 class PostViewModel @Inject constructor(
     private val repository: PostRepository,
     appAuth: AppAuth
-): ViewModel(){
-
-        val data: LiveData<FeedModel> = appAuth
+) : ViewModel() {
+    val data: Flow<PagingData<Post>> = appAuth
         .authStateFlow
         .flatMapLatest { (myId, _) ->
-            repository.data
-                .map { posts ->
-                    FeedModel(
-                        posts.map { it.copy(ownedByMe = it.authorId == myId) },
-                        posts.isEmpty()
-                    )
+            val cached = repository.data.cachedIn(viewModelScope)
+            cached.map { pagingData ->
+                pagingData.map {
+                    it.copy(ownedByMe = it.authorId == myId)
                 }
-        }.asLiveData(Dispatchers.Default)
+            }
+        }
 
     private val _dataState = MutableLiveData<FeedModelState>()
     val dataState: LiveData<FeedModelState>
         get() = _dataState
-
-    val newerCount: LiveData<Int> = data.switchMap {
-        repository.getNewerCount(
-            it.posts.firstOrNull()?.id ?: 0L)
-            .catch { e -> e.printStackTrace() }
-            .asLiveData(Dispatchers.Default)
-    }
-
-
 
     private val edited = MutableLiveData(empty)
     private val _postCreated = SingleLiveEvent<Unit>()
@@ -67,30 +60,6 @@ class PostViewModel @Inject constructor(
         get() = _postCreated
     var lastAction: ActionType? = null
     var lastId = 0L
-
-    init {
-        loadPosts()
-    }
-
-    fun loadPosts() = viewModelScope.launch {
-        try {
-            _dataState.value = FeedModelState(loading = true)
-            repository.getAll()
-            _dataState.value = FeedModelState()
-        } catch (e: Exception) {
-            _dataState.value = FeedModelState(error = true)
-        }
-    }
-
-    fun refreshPosts() = viewModelScope.launch {
-        try {
-            _dataState.value = FeedModelState(refreshing = true)
-            repository.getAll()
-            _dataState.value = FeedModelState()
-        } catch (e: Exception) {
-            _dataState.value = FeedModelState(error = true)
-        }
-    }
 
     fun update() = viewModelScope.launch {
         try {
@@ -173,7 +142,7 @@ class PostViewModel @Inject constructor(
         when (lastAction){
             ActionType.LIKE -> retryLikeById()
             ActionType.DISLIKE -> retryDisLikeById()
-            ActionType.SAVE -> refreshPosts()
+//            ActionType.SAVE -> refreshPosts()
             ActionType.REMOVE -> retryRemove()
 
         }
