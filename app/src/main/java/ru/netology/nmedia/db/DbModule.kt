@@ -8,6 +8,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import ru.netology.nmedia.dao.PostDao
+import ru.netology.nmedia.dao.PostRemoteKeyDao
 import javax.inject.Singleton
 
 
@@ -25,4 +26,8 @@ class DbModule {
 
     @Provides
     fun providesPostDao(appDb: AppDb): PostDao = appDb.postDao()
+
+    @Provides
+    fun providesPostRemoteKeyDao(appDb: AppDb): PostRemoteKeyDao =
+        appDb.postRemoteKeyDao()
 }
