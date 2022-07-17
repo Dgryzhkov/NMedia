@@ -116,6 +116,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$coroutines_version"
 
     implementation "com.google.dagger:hilt-android:$hilt_version"
+    implementation "androidx.paging:paging-runtime-ktx:$paging_version"
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
 
 }
