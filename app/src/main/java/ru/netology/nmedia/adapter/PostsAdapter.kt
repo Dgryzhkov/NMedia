@@ -13,7 +13,10 @@ import com.bumptech.glide.Glide
 import ru.netology.nmedia.BuildConfig
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.DisplayingImagesFragment.Companion.textArg
+import ru.netology.nmedia.databinding.CardAdBinding
 import ru.netology.nmedia.databinding.CardPostBinding
+import ru.netology.nmedia.dto.Ad
+import ru.netology.nmedia.dto.FeedItem
 import ru.netology.nmedia.dto.Post
 
 interface OnInteractionListener {
@@ -25,15 +28,54 @@ interface OnInteractionListener {
 
 class PostsAdapter(
     private val onInteractionListener: OnInteractionListener,
-) : PagingDataAdapter<Post, PostViewHolder>(PostDiffCallback()) {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
-        val binding = CardPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return PostViewHolder(binding, onInteractionListener)
-    }
+) : PagingDataAdapter<FeedItem, RecyclerView.ViewHolder>(PostDiffCallback()) {
+    override fun getItemViewType(position: Int): Int =
+        when (getItem(position)) {
+            is Ad -> R.layout.card_ad
+            is Post -> R.layout.card_post
+            null -> error("unknown item type")
+        }
 
-    override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
-        val post = getItem(position) ?: return
-        holder.bind(post)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
+
+        when (viewType) {
+            R.layout.card_post -> {
+                val binding =
+                    CardPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                PostViewHolder(binding, onInteractionListener)
+            }
+            R.layout.card_ad -> {
+                val binding =
+                    CardAdBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                AdViewHolder(binding)
+            }
+            else -> error("unknown view type: $viewType")
+        }
+
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (val item = getItem(position)) {
+            is Ad -> (holder as? AdViewHolder)?.bind(item)
+            is Post -> (holder as? PostViewHolder)?.bind(item)
+            null -> error("unknown item type")
+        }
+    }
+}
+
+//TODO
+class AdViewHolder(
+    private val binding: CardAdBinding,
+) : RecyclerView.ViewHolder(binding.root) {
+
+    fun bind(ad: Ad) {
+        binding.apply {
+            Glide.with(itemView)
+                .load("${BuildConfig.BASE_URL}/media/${ad.image}")
+                .timeout(5_000)
+                .circleCrop()
+                .into(image)
+        }
+       // binding.image.load("${BuildConfig.BASE_URL}/media/${ad.image}")
     }
 }
 
@@ -45,7 +87,7 @@ class PostViewHolder(
     fun bind(post: Post) {
         binding.apply {
             attachment.visibility = View.GONE
-            val urlAvatar ="${BuildConfig.BASE_URL}/avatars/${post.authorAvatar}"
+            val urlAvatar = "${BuildConfig.BASE_URL}/avatars/${post.authorAvatar}"
             Glide.with(itemView)
                 .load(urlAvatar)
                 .error(R.drawable.ic_avatar_loading_error_48)
@@ -57,7 +99,7 @@ class PostViewHolder(
 
             if (post.attachment != null) {
                 attachment.visibility = View.VISIBLE
-                val urlImage ="${BuildConfig.BASE_URL}/images/${post.attachment!!.url}"
+                val urlImage = "${BuildConfig.BASE_URL}/images/${post.attachment!!.url}"
                 Glide.with(itemView).load(urlImage).timeout(10_000).into(attachment)
             }
 
@@ -98,21 +140,25 @@ class PostViewHolder(
                 onInteractionListener.onShare(post)
             }
 
-            attachment.setOnClickListener{
-                it.findNavController().navigate(R.id.action_feedFragment_to_displayingImagesFragment,
-                    Bundle().apply { textArg = post.attachment?.url ?: " "})
+            attachment.setOnClickListener {
+                it.findNavController()
+                    .navigate(R.id.action_feedFragment_to_displayingImagesFragment,
+                        Bundle().apply { textArg = post.attachment?.url ?: " " })
             }
 
         }
     }
 }
 
-class PostDiffCallback : DiffUtil.ItemCallback<Post>() {
-    override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean {
+class PostDiffCallback : DiffUtil.ItemCallback<FeedItem>() {
+    override fun areItemsTheSame(oldItem: FeedItem, newItem: FeedItem): Boolean {
+        if (oldItem::class != newItem::class) {
+            return false
+        }
         return oldItem.id == newItem.id
     }
 
-    override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean {
+    override fun areContentsTheSame(oldItem: FeedItem, newItem: FeedItem): Boolean {
         return oldItem == newItem
     }
 }

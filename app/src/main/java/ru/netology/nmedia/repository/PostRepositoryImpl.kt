@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.flow.map
 import ru.netology.nmedia.api.ApiService
 import ru.netology.nmedia.dao.PostDao
+import ru.netology.nmedia.dto.Ad
+import ru.netology.nmedia.dto.FeedItem
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.entity.PostEntity
 import ru.netology.nmedia.entity.toEntity
@@ -18,6 +20,7 @@ import ru.netology.nmedia.error.UnknownError
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Provider
+import kotlin.random.Random
 
 
 @OptIn(ExperimentalPagingApi::class)
@@ -28,12 +31,19 @@ class PostRepositoryImpl @Inject constructor(
 ): PostRepository {
     var nextId: Long = 0L
     private val memoryPosts = mutableListOf<Post>()
-    override val data: Flow<PagingData<Post>> = Pager(
+    override val data: Flow<PagingData<FeedItem>> = Pager(
         config = PagingConfig(pageSize = 10, enablePlaceholders = false),
         pagingSourceFactory = {dao.getAll()},
         remoteMediator = mediator
     ).flow.map{
         it.map(PostEntity::toDto)
+            .insertSeparators { previous, _->
+                if (previous?.id?.rem(5)==0L){
+                    Ad(Random.nextLong(), "figma.jpg")
+                } else{
+                    null
+            }
+            }
     }
 
     override suspend fun getAll() {

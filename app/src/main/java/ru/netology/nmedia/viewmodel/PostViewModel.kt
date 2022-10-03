@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.auth.AppAuth
+import ru.netology.nmedia.dto.FeedItem
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.FeedModel
 import ru.netology.nmedia.model.FeedModelState
@@ -39,13 +40,17 @@ class PostViewModel @Inject constructor(
     private val repository: PostRepository,
     appAuth: AppAuth
 ) : ViewModel() {
-    val data: Flow<PagingData<Post>> = appAuth
+    val data: Flow<PagingData<FeedItem>> = appAuth
         .authStateFlow
         .flatMapLatest { (myId, _) ->
             val cached = repository.data.cachedIn(viewModelScope)
             cached.map { pagingData ->
-                pagingData.map {
-                    it.copy(ownedByMe = it.authorId == myId)
+                pagingData.map { post ->
+                    if (post is Post){
+                    post.copy(ownedByMe = post.authorId == myId)
+                } else {
+                    post
+                    }
                 }
             }
         }
