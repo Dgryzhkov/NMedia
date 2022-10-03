@@ -75,7 +75,6 @@ class AdViewHolder(
                 .circleCrop()
                 .into(image)
         }
-       // binding.image.load("${BuildConfig.BASE_URL}/media/${ad.image}")
     }
 }
 
