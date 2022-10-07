@@ -62,7 +62,7 @@ class PostsAdapter(
     }
 }
 
-//TODO
+//TODO не работает отображение рекламы
 class AdViewHolder(
     private val binding: CardAdBinding,
 ) : RecyclerView.ViewHolder(binding.root) {
@@ -71,8 +71,7 @@ class AdViewHolder(
         binding.apply {
             Glide.with(itemView)
                 .load("${BuildConfig.BASE_URL}/media/${ad.image}")
-                .timeout(5_000)
-                .circleCrop()
+                .timeout(10_000)
                 .into(image)
         }
     }
